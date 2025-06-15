@@ -6,27 +6,33 @@
 		<title>Hello, World!</title>
 	</head>
 	<body>
-		<h1 id="heading"></h1>
-		<p>This page comes from a static asset stored at `public/index.html` as configured in `wrangler.jsonc`.</p>
-		<button id="button" type="button">Fetch a random UUID</button>
-		<output id="random" for="button"></output>
-		<script>
-			fetch('/message')
-				.then((resp) => resp.text())
-				.then((text) => {
-					const h1 = document.getElementById('heading');
-					h1.textContent = text;
-				});
-
-			const button = document.getElementById("button");
-			button.addEventListener("click", () => {
-				fetch('/random')
-					.then((resp) => resp.text())
-					.then((text) => {
-						const random = document.getElementById('random');
-						random.textContent = text;
-					});
-			});
-		</script>
-	</body>
+		<body>
+  <h1>Etsy AI Listing Optimizer</h1>
+  <form id="optimizer-form">
+    <label for="title">Title:</label><br>
+    <input id="title" name="title" type="text" required><br><br>
+    <label for="description">Description:</label><br>
+    <textarea id="description" name="description" rows="4" required></textarea><br><br>
+    <label for="tags">Tags (comma separated):</label><br>
+    <input id="tags" name="tags" type="text" required><br><br>
+    <button type="submit">Optimize</button>
+  </form>
+  <pre id="output"></pre>
+  <script>
+    document.getElementById('optimizer-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const title = document.getElementById('title').value;
+      const description = document.getElementById('description').value;
+      const tags = document.getElementById('tags').value;
+      document.getElementById('output').textContent = "Optimizing...";
+      const response = await fetch('https://etsy-optimizer-ai-js.the-esoteric-eel.workers.dev/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, description, tags })
+      });
+      const data = await response.json();
+      document.getElementById('output').textContent = data.result || 'No result from API.';
+    });
+  </script>
+</body>
 </html>
